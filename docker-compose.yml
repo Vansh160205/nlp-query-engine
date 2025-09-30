@@ -1,0 +1,29 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: employee_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Vansh@1602
+      POSTGRES_DB: company_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: query_engine_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app  # Mounts your local backend folder into the container
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
